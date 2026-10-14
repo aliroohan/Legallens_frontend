@@ -1,0 +1,131 @@
+.root {
+  display: flex;
+  min-height: 100vh;
+  width: 100%;
+  background: var(--sage-light);
+}
+
+/* ── Left: Brand Panel ── */
+.brandPanel {
+  flex: 0 0 45%;
+  min-width: 420px;
+  max-width: 580px;
+  background-color: var(--sage-soft);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: var(--space-12) var(--space-12);
+  position: relative;
+  overflow: hidden;
+  border-right: 1px solid rgba(47, 79, 47, 0.08);
+}
+
+.brandHeader {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  z-index: 2;
+}
+
+.logoMark {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.brandName {
+  font-family: var(--font-brand);
+  font-size: var(--text-2xl);
+  font-weight: var(--fw-bold);
+  color: var(--brand-text);
+  letter-spacing: -0.02em;
+}
+
+.brandHero {
+  margin: auto 0;
+  z-index: 2;
+  padding-top: var(--space-6);
+}
+
+.heroHeadline {
+  font-family: var(--font-serif-accent);
+  font-size: 52px;
+  line-height: 1.05;
+  font-weight: 500;
+  color: var(--sage-dark);
+  letter-spacing: -0.03em;
+  margin-bottom: var(--space-6);
+}
+
+.heroTagline {
+  font-family: var(--font-sans);
+  font-size: var(--text-lg);
+  font-weight: var(--fw-semibold);
+  color: var(--sage-mid);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin-bottom: var(--space-2);
+}
+
+.heroSub {
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  color: var(--text-secondary);
+  line-height: var(--lh-relaxed);
+  max-width: 340px;
+}
+
+.illustration {
+  margin-top: auto;
+  display: flex;
+  justify-content: center;
+  opacity: 0.85;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.illustration svg {
+  width: 100%;
+  max-width: 440px;
+  height: auto;
+}
+
+/* ── Right: Form Panel ── */
+.formPanel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-10) var(--space-8);
+  overflow-y: auto;
+}
+
+.formContent {
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+/* Responsive collapse on smaller screens */
+@media (max-width: 900px) {
+  .root {
+    flex-direction: column;
+  }
+  .brandPanel {
+    flex: none;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    padding: var(--space-6);
+  }
+  .heroHeadline {
+    font-size: 36px;
+  }
+  .illustration {
+    display: none;
+  }
+  .formPanel {
+    padding: var(--space-6) var(--space-4);
+  }
+}

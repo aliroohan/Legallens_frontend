@@ -1,0 +1,103 @@
+/* ============================================================
+   LegalLens Design Tokens
+   All values extracted from Figma: BUwLMT5Ef8WbNh1tJQdiJv
+   ============================================================ */
+
+:root {
+  /* ── Colors: Sage Brand ── */
+  --sage-dark: #2f4f2f;
+  --sage-mid: #526b55;
+  --sage-hover: #3a6b3a;
+  --sage-soft: #e5ebe5;
+  --sage-light: #f8faf8;
+  --brand-text: #223026;
+
+  /* ── Sidebar Gradient ── */
+  --sidebar-gradient: linear-gradient(
+    180deg,
+    rgba(227, 234, 217, 1) 0%,
+    rgba(211, 223, 200, 1) 18%,
+    rgba(190, 206, 174, 1) 60%,
+    rgba(169, 191, 153, 1) 100%
+  );
+
+  /* ── Colors: Text ── */
+  --text-primary: #0f172a;
+  --text-secondary: #64748b;
+  --text-muted: #94a3b8;
+
+  /* ── Colors: Surface & Border ── */
+  --surface-white: #ffffff;
+  --surface-bg: #f8faf8;
+  --border: #e2e8f0;
+  --border-focus: #2f4f2f;
+
+  /* ── Colors: Status ── */
+  --status-success-bg: #ecfdf5;
+  --status-success-text: #047857;
+  --status-warning-bg: #fffbeb;
+  --status-warning-text: #92400e;
+  --status-danger-bg: #fef3f2;
+  --status-danger-text: #b42318;
+  --status-neutral-bg: #e5ebe5;
+  --status-neutral-text: #64748b;
+
+  /* ── Colors: Interactive ── */
+  --danger: #b42318;
+  --danger-hover: #991b1b;
+
+  /* ── Typography: Font Families ── */
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-brand: 'Plus Jakarta Sans', system-ui, sans-serif;
+
+  /* ── Typography: Scale ── */
+  --text-xs: 10px;    /* caption */
+  --text-sm: 12px;    /* small */
+  --text-base: 14px;  /* body, label */
+  --text-lg: 18px;    /* subheadings */
+  --text-xl: 24px;    /* title */
+  --text-2xl: 54px;   /* hero (auth panel) */
+
+  /* ── Typography: Line Height ── */
+  --lh-tight: 1.08em;
+  --lh-normal: 1.45em;
+
+  /* ── Typography: Weight ── */
+  --fw-regular: 400;
+  --fw-medium: 500;
+  --fw-bold: 700;
+
+  /* ── Spacing ── */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-7: 28px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+
+  /* ── Border Radius ── */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 14px;
+  --radius-full: 9999px;
+
+  /* ── Shadows ── */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
+
+  /* ── Layout ── */
+  --sidebar-width: 256px;
+  --header-height: 64px;
+
+  /* ── Transitions ── */
+  --transition-fast: 150ms ease;
+  --transition-base: 200ms ease;
+  --transition-slow: 300ms ease;
+}

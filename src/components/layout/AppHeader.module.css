@@ -1,0 +1,121 @@
+.header {
+  height: 64px;
+  background: var(--surface-white);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 var(--space-8);
+  position: sticky;
+  top: 0;
+  z-index: 40;
+}
+
+.searchWrapper {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  background: var(--sage-light);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  padding: 0 var(--space-4);
+  width: 340px;
+  height: 38px;
+  transition: all var(--duration-fast);
+}
+
+.searchWrapper:focus-within {
+  border-color: var(--border-focus);
+  background: var(--surface-white);
+  box-shadow: 0 0 0 3px rgba(47, 79, 47, 0.08);
+}
+
+.searchInput {
+  border: none;
+  background: transparent;
+  width: 100%;
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  color: var(--text-primary);
+  outline: none;
+}
+
+.searchInput::placeholder {
+  color: var(--text-secondary);
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.iconBtn {
+  background: none;
+  border: none;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+  cursor: pointer;
+  position: relative;
+  transition: all var(--duration-fast);
+}
+
+.iconBtn:hover {
+  background: var(--sage-light);
+  color: var(--text-primary);
+}
+
+.badgeDot {
+  width: 8px;
+  height: 8px;
+  background: var(--sage-dark);
+  border: 2px solid var(--surface-white);
+  border-radius: var(--radius-full);
+  position: absolute;
+  top: 6px;
+  right: 6px;
+}
+
+.divider {
+  width: 1px;
+  height: 24px;
+  background: var(--border);
+}
+
+.userBadge {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  cursor: pointer;
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-full);
+  transition: background var(--duration-fast);
+}
+
+.userBadge:hover {
+  background: var(--sage-light);
+}
+
+.userAvatar {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-full);
+  background: var(--sage-mid);
+  color: var(--surface-white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--text-xs);
+  font-weight: var(--fw-semibold);
+}
+
+.userTitle {
+  font-size: var(--text-sm);
+  font-weight: var(--fw-medium);
+  color: var(--text-primary);
+}
