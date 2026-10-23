@@ -8,52 +8,65 @@ import type {
   ApiResponse,
 } from '../types';
 
-export const casesApi = {
-  /**
-   * List cases with optional filters and pagination
-   */
-  listCases: async (filters: CaseFilters = {}): Promise<ApiResponse<PaginatedResponse<Case>>> => {
-    const params = new URLSearchParams();
-    if (filters.status) params.set('status', filters.status);
-    if (filters.matterType) params.set('matterType', filters.matterType);
-    if (filters.page) params.set('page', String(filters.page));
-    if (filters.limit) params.set('limit', String(filters.limit));
-    if (filters.sort) params.set('sort', filters.sort);
+// Backend case document -> the Case shape the frontend pages expect
+const fromBackend = (c: any): Case =>
+  ({
+    ...c,
+    id: c.caseId,
+    title: c.caseName,
+  }) as unknown as Case;
 
-    const res = await apiClient.get(`/cases?${params.toString()}`);
-    return res.data;
+export const casesApi = {
+  listCases: async (filters: CaseFilters = {}): Promise<ApiResponse<PaginatedResponse<Case>>> => {
+    const res = await apiClient.get('/cases', {
+      params: {
+        status: filters.status || undefined,
+        matterType: filters.matterType || undefined,
+        page: filters.page,
+        limit: filters.limit,
+      },
+    });
+    const body = res.data;
+    return {
+      ...body,
+      data: {
+        items: (body.data ?? []).map(fromBackend),
+        total: body.meta?.total ?? 0,
+        page: body.meta?.page ?? 1,
+        totalPages: body.meta?.totalPages ?? 1,
+      },
+    } as unknown as ApiResponse<PaginatedResponse<Case>>;
   },
 
-  /**
-   * Get a single case by ID
-   */
   getCaseById: async (caseId: string): Promise<ApiResponse<Case>> => {
     const res = await apiClient.get(`/cases/${caseId}`);
-    return res.data;
+    return { ...res.data, data: fromBackend(res.data.data) };
   },
 
-  /**
-   * Create a new case
-   */
   createCase: async (payload: CreateCasePayload): Promise<ApiResponse<Case>> => {
-    const res = await apiClient.post('/cases', payload);
-    return res.data;
+    const p = payload as CreateCasePayload & { opposingParty?: string };
+    const res = await apiClient.post('/cases', {
+      caseName: p.title,
+      clientName: p.clientName,
+      matterType: p.matterType,
+      description: p.description ?? '',
+      opposingParty: p.opposingParty, // ignored by backend until you add that field
+    });
+    return { ...res.data, data: fromBackend(res.data.data) };
   },
 
-  /**
-   * Update case metadata or status
-   */
   updateCase: async (caseId: string, payload: UpdateCasePayload): Promise<ApiResponse<Case>> => {
-    const res = await apiClient.patch(`/cases/${caseId}`, payload);
-    return res.data;
+    const { title, ...rest } = payload as UpdateCasePayload & { title?: string };
+    const res = await apiClient.patch(`/cases/${caseId}`, {
+      ...rest,
+      ...(title !== undefined ? { caseName: title } : {}),
+    });
+    return { ...res.data, data: fromBackend(res.data.data) };
   },
 
-  /**
-   * Delete a case (must be Closed; requires confirmation string)
-   */
   deleteCase: async (caseId: string, confirmationName: string): Promise<ApiResponse> => {
     const res = await apiClient.delete(`/cases/${caseId}`, {
-      data: { confirmation: confirmationName },
+      data: { confirmCaseName: confirmationName },
     });
     return res.data;
   },
