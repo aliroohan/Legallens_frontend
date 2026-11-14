@@ -20,6 +20,10 @@ export interface User {
   firmId?: string;
   organizationName?: string;
   isIndependent?: boolean;
+  allocatedStorageBytes?: number;
+  usedStorageBytes?: number;
+  monthlyForensicLimit?: number;
+  currentMonthForensicRuns?: number;
   createdAt?: string;
 }
 
@@ -105,16 +109,19 @@ export type FileCategory = 'image' | 'document' | 'video' | 'audio';
 
 export interface EvidenceFile {
   id: string;
+  fileId?: string;
   caseId: string;
   filename: string;
   originalName: string;
   mimeType: string;
   fileCategory: FileCategory;
   size: number;
+  sizeBytes?: number;
   sha256Hash: string;
   processingStatus: FileProcessingStatus;
   uploadedBy: string;
   createdAt: string;
+  uploadedAt?: string;
   deletedAt?: string;
 }
 
@@ -122,26 +129,84 @@ export interface EvidenceFile {
 export type AuthenticityLabel = 'Authentic' | 'Suspicious' | 'Highly Manipulated';
 
 export interface ModuleResult {
-  score: number | null;
-  isApplicable: boolean;
+  status: 'success' | 'not_applicable' | 'failed';
+  subScore: number | null;
   explanation: string;
-  annotatedImageUrl?: string;
+  heatmapBase64?: string | null;
+  details?: {
+    sourceName?: string;
+    findings?: string[];
+  };
 }
 
 export interface ForensicResult {
-  id: string;
+  resultId: string;
   fileId: string;
   caseId: string;
-  exif: ModuleResult;
-  ela: ModuleResult;
-  copyMove: ModuleResult;
-  noise: ModuleResult;
-  lighting: ModuleResult;
-  deepfake: ModuleResult;
-  fusionScore: number;
-  authenticityLabel: AuthenticityLabel;
-  analysisVersion: string;
-  completedAt: string;
+  status: 'pending' | 'processing' | 'completed' | 'failed';
+  fusionScore: number | null;
+  authenticityLabel: AuthenticityLabel | null;
+  modules: {
+    exif: ModuleResult;
+    ela: ModuleResult;
+    copyMove: ModuleResult;
+    noise: ModuleResult;
+    lighting: ModuleResult;
+    deepfake: ModuleResult;
+  };
+  errorMessage?: string;
+  analyzedAt?: string;
+}
+
+export interface ReverseSearchResult {
+  status: 'completed' | 'no_matches_found' | 'failed';
+  matchesCount: number;
+  message?: string;
+  results: Array<{
+    title: string;
+    sourceUrl: string;
+    similarityScore?: number;
+    snippet?: string;
+  }>;
+}
+
+export interface AppNotification {
+  notificationId: string;
+  title: string;
+  message: string;
+  type: string;
+  read: boolean;
+  createdAt: string;
+  caseId?: string;
+}
+
+export interface AuditEntry {
+  logId: string;
+  action: string;
+  userEmail?: string;
+  timestamp: string;
+  details?: Record<string, unknown>;
+}
+
+export interface Organization {
+  orgId: string;
+  name: string;
+  adminEmail: string;
+  status: 'active' | 'suspended' | 'deactivated';
+  maxUsers: number;
+  userCount: number;
+  allocatedStorageBytes: number;
+  usedStorageBytes: number;
+  remainingStorageBytes: number;
+  monthlyForensicLimit: number;
+  currentMonthForensicRuns: number;
+}
+
+export interface CaseReport {
+  reportId: string;
+  caseId: string;
+  title: string;
+  createdAt: string;
 }
 
 // ── Pagination ───────────────────────────────────────────────

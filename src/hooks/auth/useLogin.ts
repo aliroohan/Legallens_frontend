@@ -4,6 +4,7 @@ import toast from 'react-hot-toast';
 import { authApi } from '../../api/auth.api';
 import { useAuthStore } from '../../store/authStore';
 import type { LoginPayload } from '../../types';
+import { homePath } from '../../utils/homePath';
 
 export const useLogin = () => {
   const { setUser } = useAuthStore();
@@ -28,13 +29,7 @@ export const useLogin = () => {
         toast.success(`Welcome back, ${user.name?.split(' ')[0] || 'Counsel'}!`);
 
         // Route based on bar ID status
-        if (user.barIdStatus === 'pending') {
-          navigate('/auth/verification-pending');
-        } else if (user.barIdStatus === 'rejected') {
-          navigate('/auth/verification-failed');
-        } else {
-          navigate('/dashboard');
-        }
+        navigate(homePath(user));
       }
     },
     onError: (error: { response?: { data?: { message?: string } } }) => {

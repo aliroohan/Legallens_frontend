@@ -16,6 +16,8 @@ import { Dashboard } from '../pages/lawyer/Dashboard';
 import { Cases } from '../pages/lawyer/Cases';
 import { CreateCase } from '../pages/lawyer/CreateCase';
 import { CaseWorkspace } from '../pages/lawyer/CaseWorkspace';
+import { SuperAdmin } from '../pages/admin/SuperAdmin';
+import { OrgAdmin } from '../pages/org/OrgAdmin';
 
 export const router = createBrowserRouter([
   // ── Root redirect ───────────────────────────────────────────
@@ -58,12 +60,8 @@ export const router = createBrowserRouter([
       { path: 'cases', element: <Cases /> },
       { path: 'cases/new', element: <CreateCase /> },
       { path: 'cases/:caseId', element: <CaseWorkspace /> },
-      // Later phases
-      // { path: 'evidence', element: <EvidenceLibrary /> },
-      // { path: 'reports', element: <ReportsLibrary /> },
-      // { path: 'audit', element: <AuditTrail /> },
-      // { path: 'settings', element: <LawyerSettings /> },
-      // { path: 'notifications', element: <Notifications /> },
+      { path: 'admin', element: <SuperAdmin /> },
+      { path: 'org', element: <OrgAdmin /> },
     ],
   },
 

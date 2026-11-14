@@ -2,23 +2,25 @@ import { NavLink } from 'react-router-dom';
 import {
   LayoutDashboard,
   Briefcase,
-  ShieldCheck,
-  FileText,
-  History,
-  Settings,
+  Building2,
   LogOut,
 } from 'lucide-react';
 import { useAuthStore } from '../../store/authStore';
 import { useLogout } from '../../hooks/auth/useLogout';
 import styles from './Sidebar.module.css';
 
-const navItems = [
+const lawyerNav = [
   { label: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
   { label: 'Cases', path: '/cases', icon: Briefcase },
-  { label: 'Evidence Vault', path: '/evidence', icon: ShieldCheck },
-  { label: 'Forensic Reports', path: '/reports', icon: FileText },
-  { label: 'Audit Trail', path: '/audit', icon: History },
-  { label: 'Settings', path: '/settings', icon: Settings },
+];
+
+const orgNav = [
+  { label: 'Firm', path: '/org', icon: Building2 },
+  { label: 'Cases', path: '/cases', icon: Briefcase },
+];
+
+const adminNav = [
+  { label: 'Platform', path: '/admin', icon: Building2 },
 ];
 
 export const Sidebar = () => {
@@ -48,7 +50,9 @@ export const Sidebar = () => {
           </svg>
           <div className={styles.brandTextGroup}>
             <span className={styles.brandName}>Legalens</span>
-            <span className={styles.workspaceBadge}>Lawyer Workspace</span>
+            <span className={styles.workspaceBadge}>
+              {user?.role === 'super_admin' ? 'Platform' : user?.role === 'org_admin' ? 'Organization' : 'Lawyer Workspace'}
+            </span>
           </div>
         </div>
 
@@ -62,7 +66,7 @@ export const Sidebar = () => {
 
         {/* Navigation */}
         <nav className={styles.nav} aria-label="Main Navigation">
-          {navItems.map((item) => {
+          {(user?.role === 'super_admin' ? adminNav : user?.role === 'org_admin' ? orgNav : lawyerNav).map((item) => {
             const Icon = item.icon;
             return (
               <NavLink
@@ -90,7 +94,7 @@ export const Sidebar = () => {
                 {user?.name || 'Lawyer'}
               </span>
               <span className={styles.userRole}>
-                {user?.role === 'org_admin' ? 'Org Admin' : 'Lawyer'}
+                {user?.role === 'super_admin' ? 'Super Admin' : user?.role === 'org_admin' ? 'Org Admin' : 'Lawyer'}
               </span>
             </div>
           </div>

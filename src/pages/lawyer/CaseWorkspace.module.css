@@ -185,8 +185,75 @@
   color: var(--text-secondary);
 }
 
+.formGrid {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.dropzone {
+  border: 1px dashed var(--sage-mid);
+  border-radius: var(--radius-xl);
+  background: var(--sage-light);
+  padding: var(--space-8);
+  text-align: center;
+  color: var(--text-secondary);
+}
+
+.fileList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.fileRow {
+  display: grid;
+  grid-template-columns: 1.4fr 0.6fr 0.8fr auto;
+  gap: var(--space-3);
+  align-items: center;
+  background: var(--surface-white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+}
+
+.fileName {
+  font-weight: var(--fw-semibold);
+  color: var(--text-primary);
+}
+
+.muted {
+  color: var(--text-secondary);
+  font-size: var(--text-xs);
+}
+
+.moduleGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-4);
+}
+
+.heatmap {
+  width: 100%;
+  border-radius: var(--radius-md);
+  margin-top: var(--space-3);
+}
+
+.score {
+  font-size: var(--text-3xl);
+  font-weight: var(--fw-bold);
+  color: var(--sage-dark);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
 @media (max-width: 900px) {
-  .grid2 {
+  .grid2,
+  .moduleGrid,
+  .fileRow {
     grid-template-columns: 1fr;
   }
 }
