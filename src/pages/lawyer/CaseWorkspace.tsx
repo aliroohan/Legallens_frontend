@@ -1,5 +1,7 @@
 import { useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import toast from 'react-hot-toast';
 import {
   ArrowLeft,
   Folder,
@@ -7,9 +9,7 @@ import {
   Cpu,
   History,
   Upload,
-  Clock,
   ShieldCheck,
-  CheckCircle2,
   FileText,
 } from 'lucide-react';
 import { Button } from '../../components/ui/Button';
@@ -17,18 +17,39 @@ import { StatusBadge } from '../../components/ui/StatusBadge';
 import { Spinner } from '../../components/ui/Spinner';
 import { useCase } from '../../hooks/cases/useCase';
 import { useUpdateCase } from '../../hooks/cases/useUpdateCase';
+import { casesApi } from '../../api/cases.api';
+import { apiErrorMessage } from '../../utils/homePath';
+import { EvidencePanel } from './EvidencePanel';
+import { ForensicsPanel } from './ForensicsPanel';
+import { HistoryPanel } from './HistoryPanel';
+import type { MatterType } from '../../types';
 import styles from './CaseWorkspace.module.css';
 
 type TabKey = 'overview' | 'evidence' | 'forensics' | 'history';
 
+const matterTypes: MatterType[] = ['Litigation', 'Insurance Claim', 'Criminal Defense', 'IP Dispute', 'Other'];
+
 export const CaseWorkspace = () => {
   const { caseId = '' } = useParams();
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState<TabKey>('overview');
+  const [editing, setEditing] = useState(false);
+  const [confirmName, setConfirmName] = useState('');
 
   const { data, isLoading } = useCase(caseId);
   const updateCase = useUpdateCase(caseId);
-
   const currentCase = data?.data;
+
+  const removeCase = useMutation({
+    mutationFn: () => casesApi.deleteCase(caseId, confirmName),
+    onSuccess: () => {
+      toast.success('Closed case deleted.');
+      queryClient.invalidateQueries({ queryKey: ['cases'] });
+      navigate('/cases');
+    },
+    onError: (error) => toast.error(apiErrorMessage(error, 'Deletion was not confirmed.')),
+  });
 
   const handleToggleStatus = () => {
     if (!currentCase) return;
@@ -88,6 +109,9 @@ export const CaseWorkspace = () => {
           </div>
 
           <div className={styles.headerActions}>
+            <Button variant="secondary" size="sm" onClick={() => setEditing((value) => !value)}>
+              {editing ? 'Hide edit' : 'Edit details'}
+            </Button>
             <Button
               variant="secondary"
               size="sm"
@@ -155,6 +179,33 @@ export const CaseWorkspace = () => {
       {/* Tab Panels */}
       <div className={styles.tabContent}>
         {activeTab === 'overview' && (
+          <div className={styles.tabContent}>
+          {editing && (
+            <form
+              className={styles.infoCard}
+              onSubmit={(event) => {
+                event.preventDefault();
+                const form = new FormData(event.currentTarget);
+                updateCase.mutate({
+                  title: String(form.get('title') || ''),
+                  clientName: String(form.get('clientName') || ''),
+                  matterType: String(form.get('matterType') || 'Other') as MatterType,
+                  description: String(form.get('description') || ''),
+                });
+              }}
+            >
+              <h3 className={styles.cardTitle}>Edit case</h3>
+              <div className={styles.formGrid}>
+                <input name="title" defaultValue={currentCase.title} required maxLength={120} />
+                <input name="clientName" defaultValue={currentCase.clientName} required />
+                <select name="matterType" defaultValue={currentCase.matterType}>
+                  {matterTypes.map((type) => <option key={type}>{type}</option>)}
+                </select>
+                <textarea name="description" defaultValue={currentCase.description || ''} maxLength={1000} rows={4} />
+                <Button type="submit" size="sm" isLoading={updateCase.isPending}>Save changes</Button>
+              </div>
+            </form>
+          )}
           <div className={styles.grid2}>
             <div className={styles.infoCard}>
               <h3 className={styles.cardTitle}>
@@ -206,67 +257,26 @@ export const CaseWorkspace = () => {
               </div>
             </div>
           </div>
-        )}
-
-        {activeTab === 'evidence' && (
-          <div className={styles.emptyArea}>
-            <Upload size={40} color="var(--sage-dark)" />
-            <h3 style={{ fontSize: 'var(--text-lg)', fontWeight: 'var(--fw-semibold)' }}>
-              Evidence File Vault
-            </h3>
-            <p style={{ maxWidth: '420px', fontSize: 'var(--text-sm)' }}>
-              Upload photographic evidence, CCTV recordings, audio calls, or PDF documents to calculate cryptographic hashes and trigger AI forensics.
-            </p>
-            <Button
-              variant="primary"
-              size="md"
-              icon={<Upload size={16} />}
-              onClick={() => alert('Evidence upload flow is scheduled in Phase 2!')}
+          {currentCase.status === 'Closed' && (
+            <form
+              className={styles.infoCard}
+              onSubmit={(event) => {
+                event.preventDefault();
+                removeCase.mutate();
+              }}
             >
-              Upload Evidence File
-            </Button>
+              <h3 className={styles.cardTitle}>Delete closed case</h3>
+              <p className={styles.muted}>Type the exact case name to confirm deletion.</p>
+              <input value={confirmName} onChange={(event) => setConfirmName(event.target.value)} placeholder={currentCase.title} />
+              <Button type="submit" variant="danger" size="sm" isLoading={removeCase.isPending}>Delete case</Button>
+            </form>
+          )}
           </div>
         )}
 
-        {activeTab === 'forensics' && (
-          <div className={styles.emptyArea}>
-            <Cpu size={40} color="var(--sage-dark)" />
-            <h3 style={{ fontSize: 'var(--text-lg)', fontWeight: 'var(--fw-semibold)' }}>
-              Forensic Analysis Dossiers
-            </h3>
-            <p style={{ maxWidth: '440px', fontSize: 'var(--text-sm)' }}>
-              Run Error Level Analysis (ELA), EXIF metadata inspection, clone detection, and synthetic manipulation scoring.
-            </p>
-            <Button
-              variant="secondary"
-              size="md"
-              onClick={() => setActiveTab('evidence')}
-            >
-              Go to Evidence to Analyze Files
-            </Button>
-          </div>
-        )}
-
-        {activeTab === 'history' && (
-          <div className={styles.infoCard}>
-            <h3 className={styles.cardTitle}>
-              <Clock size={18} color="var(--sage-dark)" /> Chronological Custody History
-            </h3>
-            <div className={styles.detailList}>
-              <div style={{ display: 'flex', gap: 'var(--space-3)', alignItems: 'flex-start' }}>
-                <CheckCircle2 size={16} color="var(--status-success-text)" style={{ marginTop: '2px', flexShrink: 0 }} />
-                <div>
-                  <p style={{ fontSize: 'var(--text-sm)', fontWeight: 'var(--fw-medium)' }}>
-                    Case created and initialized
-                  </p>
-                  <span style={{ fontSize: 'var(--text-xs)', color: 'var(--text-secondary)' }}>
-                    {new Date(currentCase.createdAt).toLocaleString()} • Chain of custody opened
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
+        {activeTab === 'evidence' && <EvidencePanel caseId={caseId} closed={currentCase.status === 'Closed'} />}
+        {activeTab === 'forensics' && <ForensicsPanel caseId={caseId} />}
+        {activeTab === 'history' && <HistoryPanel caseId={caseId} />}
       </div>
     </div>
   );

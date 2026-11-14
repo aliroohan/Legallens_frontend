@@ -1,7 +1,8 @@
-import { Navigate, Outlet } from 'react-router-dom';
+import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
 import { PageSpinner } from '../components/ui/Spinner';
 import { PageLayout } from '../components/layout/PageLayout';
+import { homePath } from '../utils/homePath';
 
 /**
  * PrivateRoute — redirects to /auth/signin if not authenticated.
@@ -28,14 +29,36 @@ export const VerifiedRoute = () => {
   if (isLoading) return <PageSpinner />;
   if (!isAuthenticated) return <Navigate to="/auth/signin" replace />;
 
-  if (user?.barIdStatus === 'pending') {
+  if (user?.role === 'lawyer' && user.barIdStatus === 'pending') {
     return <Navigate to="/auth/verification-pending" replace />;
   }
-  if (user?.barIdStatus === 'rejected') {
+  if (user?.role === 'lawyer' && user.barIdStatus === 'rejected') {
     return <Navigate to="/auth/verification-failed" replace />;
   }
 
-  return <PageLayout />;
+  return (
+    <PageLayout>
+      <RoleShell />
+    </PageLayout>
+  );
+};
+
+const RoleShell = () => {
+  const { user } = useAuthStore();
+  const location = useLocation();
+  const path = location.pathname;
+
+  if (user?.role === 'super_admin' && !path.startsWith('/admin')) {
+    return <Navigate to="/admin" replace />;
+  }
+  if (user?.role === 'org_admin' && (path.startsWith('/admin') || path === '/dashboard')) {
+    return <Navigate to="/org" replace />;
+  }
+  if (user?.role === 'lawyer' && (path.startsWith('/admin') || path.startsWith('/org'))) {
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  return <Outlet />;
 };
 
 /**
@@ -47,13 +70,7 @@ export const GuestRoute = () => {
   if (isLoading) return <PageSpinner />;
 
   if (isAuthenticated) {
-    if (user?.barIdStatus === 'pending') {
-      return <Navigate to="/auth/verification-pending" replace />;
-    }
-    if (user?.barIdStatus === 'rejected') {
-      return <Navigate to="/auth/verification-failed" replace />;
-    }
-    return <Navigate to="/dashboard" replace />;
+    return <Navigate to={homePath(user)} replace />;
   }
 
   return <Outlet />;

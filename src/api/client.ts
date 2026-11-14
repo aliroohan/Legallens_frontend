@@ -20,6 +20,9 @@ apiClient.interceptors.request.use(
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+    if (typeof FormData !== 'undefined' && config.data instanceof FormData) {
+      delete config.headers['Content-Type'];
+    }
     return config;
   },
   (error) => Promise.reject(error)
@@ -27,7 +30,14 @@ apiClient.interceptors.request.use(
 
 // ── Response Interceptor: Handle 401 Session Expiry ─────────────
 apiClient.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    const refreshed = response.headers?.['x-access-token'];
+    if (typeof refreshed === 'string' && refreshed) {
+      localStorage.setItem('auth_token', refreshed);
+      document.cookie = `auth_token=${refreshed}; path=/; max-age=${8 * 3600}; SameSite=Lax`;
+    }
+    return response;
+  },
   (error) => {
     // Unauthorized → clear token and redirect to sign in if not on auth page
     if (error.response?.status === 401) {

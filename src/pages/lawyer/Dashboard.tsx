@@ -88,8 +88,10 @@ export const Dashboard = () => {
               <Cpu size={18} />
             </div>
           </div>
-          <span className={styles.metricValue}>12</span>
-          <span className={styles.metricMeta}>Completed this month</span>
+          <span className={styles.metricValue}>{user?.currentMonthForensicRuns ?? 0}</span>
+          <span className={styles.metricMeta}>
+            of {user?.monthlyForensicLimit ?? '—'} monthly runs
+          </span>
         </div>
 
         <div className={styles.metricCard}>
