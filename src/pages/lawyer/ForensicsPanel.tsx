@@ -11,7 +11,7 @@ import { apiErrorMessage } from '../../utils/homePath';
 import type { ForensicResult, ModuleResult } from '../../types';
 import styles from './CaseWorkspace.module.css';
 
-const MODULE_KEYS = ['exif', 'ela', 'copyMove', 'noise', 'lighting', 'deepfake'] as const;
+const MODULE_KEYS = ['exif', 'ela', 'copyMove', 'noise', 'splicing', 'lighting', 'deepfake'] as const;
 
 function ModuleCard({ result }: { result: ModuleResult }) {
   const title = result.details?.sourceName || 'Module';
@@ -130,6 +130,8 @@ export const ForensicsPanel = ({ caseId }: { caseId: string }) => {
   );
 };
 
+
+
 function ResultView({ result }: { result: ForensicResult }) {
   const tone = result.authenticityLabel === 'Authentic' ? 'success' : result.authenticityLabel === 'Highly Manipulated' ? 'danger' : 'warning';
   return (
@@ -145,7 +147,10 @@ function ResultView({ result }: { result: ForensicResult }) {
         {result.errorMessage && <p>{result.errorMessage}</p>}
       </div>
       <div className={styles.moduleGrid}>
-        {MODULE_KEYS.map((key) => <ModuleCard key={key} result={result.modules[key]} />)}
+        {MODULE_KEYS.map((key) => {
+          const mod = result.modules[key];
+          return mod ? <ModuleCard key={key} result={mod} /> : null;
+        })}
       </div>
     </>
   );
