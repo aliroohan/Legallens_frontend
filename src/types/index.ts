@@ -151,6 +151,7 @@ export interface ForensicResult {
     ela: ModuleResult;
     copyMove: ModuleResult;
     noise: ModuleResult;
+    splicing?: ModuleResult;
     lighting: ModuleResult;
     deepfake: ModuleResult;
   };
